@@ -1,0 +1,11 @@
+build:
+  version: "3.0"
+
+accounts:
+  message: "Welcome to Eazybank accounts related to prod APIs"
+  contactDetails:
+    name: "berat"
+    email: "beratprod@gmail.com"
+  onCallSupport:
+    -(555) 555 55 55,
+    -(123) 123 12 12

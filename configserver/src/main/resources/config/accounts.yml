@@ -1,0 +1,12 @@
+
+build:
+  version: "1.0"
+
+accounts:
+  message: "Welcome to Eazybank accounts related to local  APIs "
+  contactDetails:
+    name: "BERO"
+    email: "bero@gmail.com"
+  onCallSupport:
+    -(555) 555 55 55,
+    -(123) 123 12 12

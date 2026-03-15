@@ -1,0 +1,12 @@
+
+build:
+  version: "2.0"
+
+cards:
+  message: "Welcome to Eazybank cards related to QA APIs"
+  contactDetails:
+    name: "berat"
+    email: "beratkurumsal@gmail.com"
+  onCallSupport:
+    - (555) 555 55 55
+    - (123) 123 12 12
