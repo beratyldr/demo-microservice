@@ -38,4 +38,4 @@ services:
   microservice-gatewayserver-config:
     extends: microservice-configserver-config
     environment:
-      SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_DISCOVERY_LOCATOR_ENABLED: "true"
+      SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_DISCOVERY_LOCATOR_ENABLED: "false"

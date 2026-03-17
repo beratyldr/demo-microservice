@@ -73,25 +73,25 @@ services:
       file: common-config.yml
       service: microservice-configserver-config
 
-  gatewayserver:
-    image: "eazybytes/gatewayserver:s4"
-    container_name: gatewayserver-ms
-    ports:
-      - "8072:8072"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8072/actuator/health/readiness" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
-    depends_on:
-      eurekaserver:
-        condition: service_healthy
-    environment:
-      SPRING_APPLICATION_NAME: "gatewayserver"
-    extends:
-      file: common-config.yml
-      service: microservice-gatewayserver-config
+#  gatewayserver:
+#    image: "eazybytes/gatewayserver:s4"
+#    container_name: gatewayserver-ms
+#    ports:
+#      - "8072:8072"
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:8072/actuator/health/readiness" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 10
+#      start_period: 10s
+#    depends_on:
+#      eurekaserver:
+#        condition: service_healthy
+#    environment:
+#      SPRING_APPLICATION_NAME: "gatewayserver"
+#    extends:
+#      file: common-config.yml
+#      service: microservice-gatewayserver-config
 
 
 #  accounts:
