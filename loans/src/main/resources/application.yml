@@ -45,5 +45,10 @@ info:
     description: "EazyBank loans app"
     version: "1.0.0"
 
+logging:
+  level:
+    com:
+      eazybytes:
+        loans: DEBUG
 #springdoc:
 #  show-actuator: true

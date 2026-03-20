@@ -45,5 +45,11 @@ info:
     description: "EazyBank cards app"
     version: "1.0.0"
 
+logging:
+  level:
+    com:
+      eazybytes:
+        cards: DEBUG
+
 #springdoc:
 #  show-actuator: true

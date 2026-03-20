@@ -44,5 +44,11 @@ info:
     description: "EazyBank accounts app"
     version: "1.0.0"
 
+logging:
+  level:
+    com:
+      eazybytes:
+        accounts: DEBUG
+
 #springdoc:
 #  show-actuator: true

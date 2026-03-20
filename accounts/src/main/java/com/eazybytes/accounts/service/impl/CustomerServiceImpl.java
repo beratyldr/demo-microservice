@@ -27,10 +27,10 @@ public class CustomerServiceImpl implements CustomerService {
      * @return A {@link CustomerDetailsDto} containing the customer's details.
      */
     @Override
-    public CustomerDetailsDto fetchCustomerDetails(String mobileNumber) {
+    public CustomerDetailsDto fetchCustomerDetails(String mobileNumber, String correlationId) {
         CustomerDto customerDto = iAccountService.fetchAccount(mobileNumber);
-        ResponseEntity<CardDto> cardDtoResponseEntity = cardsFeignClient.fetchCardDetails(mobileNumber);
-        ResponseEntity<LoansDto> loansDtoResponseEntity = loansFeignClient.fetchLoansDetails(mobileNumber);
+        ResponseEntity<CardDto> cardDtoResponseEntity = cardsFeignClient.fetchCardDetails(mobileNumber,correlationId);
+        ResponseEntity<LoansDto> loansDtoResponseEntity = loansFeignClient.fetchLoansDetails(mobileNumber,correlationId);
 
         CustomerDetailsDto customerDetailsDto = new CustomerDetailsDto();
         customerDetailsDto.setCardDto(cardDtoResponseEntity.getBody());

@@ -10,5 +10,5 @@ public interface CustomerService {
      * @param mobileNumber The mobile number associated with the customer.
      * @return A {@link CustomerDetailsDto} containing the customer's details.
      */
-    CustomerDetailsDto fetchCustomerDetails(String mobileNumber);
+    CustomerDetailsDto fetchCustomerDetails(String mobileNumber,String correlationId);
 }
