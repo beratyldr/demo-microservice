@@ -16,7 +16,8 @@ public class EazybankRouteLocator {
                         .path("/eazybank/accounts/**")
                         .filters(f -> f.rewritePath("/eazybank/accounts/(?<segment>.*)", "/${segment}")
                                 .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
-                                .circuitBreaker(config->config.setName("accountsCircuitBreaker")))
+                                .circuitBreaker(config->config.setName("accountsCircuitBreaker")
+                                        .setFallbackUri("forward:/contactSupport")))
                         .uri("lb://ACCOUNTS"))
                 .route( r -> r
                         .path("/eazybank/loans/**")
