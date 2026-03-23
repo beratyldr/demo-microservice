@@ -5,6 +5,8 @@ services:
       - "3306:3306"
     environment:
       MYSQL_DATABASE: accountsdb
+    volumes:
+      - accounts_data:/var/lib/mysql
     extends:
       file: common-config.yml
       service: microservice-db-config
@@ -12,9 +14,11 @@ services:
   loansdb:
     container_name: loansdb
     ports:
-      - "3307:3307"
+      - "3307:3306"
     environment:
       MYSQL_DATABASE: loansdb
+    volumes:
+      - loans_data:/var/lib/mysql
     extends:
       file: common-config.yml
       service: microservice-db-config
@@ -22,9 +26,11 @@ services:
   cardsdb:
     container_name: cardsdb
     ports:
-      - "3308:3308"
+      - "3308:3306"
     environment:
       MYSQL_DATABASE: cardsdb
+    volumes:
+      - cards_data:/var/lib/mysql
     extends:
       file: common-config.yml
       service: microservice-db-config
@@ -41,11 +47,57 @@ services:
       retries: 10
       start_period: 10s
     environment:
-      SPRING_PROFILES_ACTIVE: native
+      SPRING_PROFILES_ACTIVE: qa
       SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS: "classpath:/config"
     extends:
       file: common-config.yml
       service: microservice-base-config
+
+  eurekaserver:
+    image: "eazybytes/eurekaserver:s4"
+    container_name: eurekaserver-ms
+    ports:
+      - "8070:8070"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8070/actuator/health/readiness" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    depends_on:
+      configserver:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "eurekaserver"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+
+  gatewayserver:
+    image: "eazybytes/gatewayserver:s4"
+    container_name: gatewayserver-ms
+    ports:
+      - "8072:8072"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8072/actuator/health/readiness" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    depends_on:
+      eurekaserver:
+        condition: service_healthy
+      accounts:
+        condition: service_healthy
+      loans:
+        condition: service_healthy
+      cards:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "gatewayserver"
+    extends:
+      file: common-config.yml
+      service: microservice-gatewayserver-config
 
 
   accounts:
@@ -53,10 +105,18 @@ services:
     container_name: accounts-ms
     ports:
       - "8080:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     depends_on:
       configserver:
         condition: service_healthy
       accountsdb:
+        condition: service_healthy
+      eurekaserver:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "accounts"
@@ -71,33 +131,66 @@ services:
     container_name: loans-ms
     ports:
       - "8090:8090"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8090/actuator/health/readiness" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     depends_on:
       configserver:
         condition: service_healthy
       loansdb:
         condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "loans"
-      SPRING_DATASOURCE_URL: "jdbc:mysql://loansdb:3307/loansdb"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://loansdb:3306/loansdb"
     extends:
       file: common-config.yml
       service: microservice-configserver-config
 
+  #  loans1:
+  #    image: "eazybytes/loans:s4"
+  #    container_name: loans-ms1
+  #    ports:
+  #      - "8091:8090"
+  #    depends_on:
+  #      configserver:
+  #        condition: service_healthy
+  #      loansdb:
+  #        condition: service_healthy
+  #      eurekaserver:
+  #        condition: service_healthy
+  #    environment:
+  #      SPRING_APPLICATION_NAME: "loans"
+  #      SPRING_DATASOURCE_URL: "jdbc:mysql://loansdb:3306/loansdb"
+  #    extends:
+  #      file: common-config.yml
+  #      service: microservice-configserver-config
 
   cards:
     image: "eazybytes/cards:s4"
     container_name: cards-ms
     ports:
       - "9000:9000"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/actuator/health/readiness" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     depends_on:
       configserver:
         condition: service_healthy
       cardsdb:
         condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "cards"
-      SPRING_DATASOURCE_URL: "jdbc:mysql://cardsdb:3308/cardsdb"
-
+      SPRING_DATASOURCE_URL: "jdbc:mysql://cardsdb:3306/cardsdb"
     extends:
       file: common-config.yml
       service: microservice-configserver-config
@@ -107,3 +200,7 @@ networks:
   eazybank:
     driver: "bridge"
 
+volumes:
+  accounts_data:
+  loans_data:
+  cards_data:

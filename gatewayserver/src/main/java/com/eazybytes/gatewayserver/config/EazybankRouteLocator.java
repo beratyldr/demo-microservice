@@ -15,12 +15,14 @@ public class EazybankRouteLocator {
                 .route( r -> r
                         .path("/eazybank/accounts/**")
                         .filters(f -> f.rewritePath("/eazybank/accounts/(?<segment>.*)", "/${segment}")
-                                .addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
+                                .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+                                .circuitBreaker(config->config.setName("accountsCircuitBreaker")))
                         .uri("lb://ACCOUNTS"))
                 .route( r -> r
                         .path("/eazybank/loans/**")
                         .filters(f -> f.rewritePath("/eazybank/loans/(?<segment>.*)", "/${segment}")
-                                .addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
+                                .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+                                .circuitBreaker(config->config.setName("loansCircuitBreaker")))
                         .uri("lb://LOANS"))
                 .route( r -> r
                         .path("/eazybank/cards/**")
