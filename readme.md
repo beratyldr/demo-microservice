@@ -1,374 +1,212 @@
-```markdown
 # EazyBytes Microservices Platform
 
-A comprehensive microservices-based banking application built with Spring Boot 4.0.3, Spring Cloud, and Jakarta EE. This platform demonstrates modern distributed system architecture with service discovery, centralized configuration, and independent microservices.
-
-## 📋 Project Overview
-
-EazyBytes is a multi-service banking platform consisting of interconnected microservices that handle different banking domains:
-
-- **Accounts Service** - Customer account management and operations
-- **Cards Service** - Credit/debit card management
-- **Loans Service** - Loan processing and management
-- **Config Server** - Centralized configuration management
-- **Eureka Server** - Service discovery and registration
-
-## 🏗️ Architecture
-```
-
-┌─────────────────────────────────────────────────────┐
-│           API Clients / Frontend                     │
-└────────────┬────────────────────────────────────────┘
-│
-┌────────────┴────────────────────────────────────────┐
-│              Eureka Service Discovery                │
-└────────────┬────────────────────────────────────────┘
-│
-┌────────┼────────┐
-│        │        │
-┌───▼──┐ ┌──▼───┐ ┌──▼───┐
-│Accts │ │Cards │ │Loans │
-└──────┘ └──────┘ └──────┘
-│        │        │
-└────────────┼────────┘
-│
-┌────────▼─────────┐
-│ Config Server    │
-└──────────────────┘
-```
-## 🚀 Tech Stack
-
-- **Framework**: Spring Boot 4.0.3
-- **Java Version**: Java 21
-- **Build Tool**: Maven 3.9+
-- **ORM**: Spring Data JPA
-- **Database**: H2 (Development), PostgreSQL (Production-ready)
-- **Service Discovery**: Spring Cloud Eureka
-- **Configuration Management**: Spring Cloud Config
-- **Validation**: Jakarta Bean Validation
-- **API Documentation**: SpringDoc OpenAPI 3.0.2
-- **Monitoring**: Spring Boot Actuator
-- **Additional Tools**: Lombok, Docker (Jib plugin)
-
-## 📦 Project Structure
-```
-
-eazybytes/
-├── accounts/              # Accounts microservice
-│   ├── src/main/java/
-│   ├── src/test/
-│   ├── pom.xml
-│   └── mvnw
-├── cards/                 # Cards microservice
-│   ├── src/main/java/
-│   ├── src/test/
-│   ├── pom.xml
-│   └── mvnw
-├── loans/                 # Loans microservice
-│   ├── src/main/java/
-│   ├── src/test/
-│   ├── pom.xml
-│   └── mvnw
-├── configserver/          # Centralized configuration server
-│   ├── src/main/java/
-│   ├── src/test/
-│   ├── pom.xml
-│   └── mvnw
-├── eurekaserver/          # Service discovery server
-│   ├── src/main/java/
-│   ├── src/test/
-│   ├── pom.xml
-│   └── mvnw
-├── docker-compose/        # Docker Compose configurations
-└── readme.md              # This file
-```
-## 🛠️ Prerequisites
-
-- **Java 21** or higher
-- **Maven 3.9+** (included via Maven Wrapper)
-- **Docker & Docker Compose** (for containerized deployment)
-- **Git** (for version control)
-
-## 📥 Installation
-
-### 1. Clone the Repository
-```
-bash
-git clone <repository-url>
-cd eazybytes
-```
-### 2. Build All Services
-
-Using Maven Wrapper (recommended):
-```
-bash
-# From project root, build all modules
-./mvnw clean install
-```
-Or with Maven:
-```
-bash
-mvn clean install
-```
-### 3. Build Individual Services
-```
-bash
-cd accounts && ./mvnw clean install
-cd ../cards && ./mvnw clean install
-cd ../loans && ./mvnw clean install
-cd ../configserver && ./mvnw clean install
-cd ../eurekaserver && ./mvnw clean install
-```
-## 🚀 Running the Application
-
-### Option 1: Run Services Individually
-
-**Start Eureka Server** (Port: 8761)
-```
-bash
-cd eurekaserver
-./mvnw spring-boot:run
-```
-**Start Config Server** (Port: 8888)
-```
-bash
-cd configserver
-./mvnw spring-boot:run
-```
-**Start Accounts Service** (Port: 8080)
-```
-bash
-cd accounts
-./mvnw spring-boot:run
-```
-**Start Cards Service** (Port: 8081)
-```
-bash
-cd cards
-./mvnw spring-boot:run
-```
-**Start Loans Service** (Port: 8082)
-```
-bash
-cd loans
-./mvnw spring-boot:run
-```
-### Option 2: Docker Compose (Recommended)
-```
-bash
-cd docker-compose
-docker-compose up -d
-```
-This will start all services with proper networking and environment configuration.
-
-## 📊 Service Ports
-
-| Service | Port | Purpose |
-|---------|------|---------|
-| Eureka Server | 8761 | Service Discovery Dashboard |
-| Config Server | 8888 | Configuration Management |
-| Accounts Service | 8080 | Account Operations |
-| Cards Service | 8081 | Card Management |
-| Loans Service | 8082 | Loan Processing |
-
-## 🔍 Service Discovery
-
-Once all services are running, access the **Eureka Dashboard**:
-```
-
-http://localhost:8761
-```
-All microservices are automatically registered with Eureka and can discover each other.
-
-## 📖 API Documentation
-
-Each microservice provides OpenAPI 3.0 documentation via Swagger UI:
-
-- **Accounts**: `http://localhost:8080/swagger-ui.html`
-- **Cards**: `http://localhost:8081/swagger-ui.html`
-- **Loans**: `http://localhost:8082/swagger-ui.html`
-
-## 🏥 Health Checks
-
-Spring Boot Actuator provides health endpoints:
-```
-bash
-curl http://localhost:8080/actuator/health
-```
-## 🧪 Testing
-
-Run tests for all services:
-```
-bash
-./mvnw test
-```
-Run tests for a specific service:
-```
-bash
-cd accounts && ./mvnw test
-```
-## 🔧 Configuration Management
-
-Configuration files are centralized in the Config Server. Services fetch their configuration on startup and can refresh it dynamically without restart.
-
-### Local Configuration
-
-Each service can have local `application.yml` or `application.properties`:
-```
-properties
-spring.application.name=accounts-service
-spring.datasource.url=jdbc:h2:mem:accountsdb
-spring.jpa.hibernate.ddl-auto=update
-```
-## 🐳 Docker & Container Deployment
-
-### Build Docker Images
-
-The project uses **Jib Maven Plugin** for efficient containerization:
-```
-bash
-./mvnw jib:build
-```
-Images are built for both ARM64 and AMD64 architectures:
-```
-
-eazybytes/accounts:s4
-eazybytes/cards:s4
-eazybytes/loans:s4
-```
-### Run with Docker Compose
-```
-bash
-cd docker-compose
-docker-compose up
-```
-## 📋 Key Dependencies
-
-### Core Dependencies
-- `spring-boot-starter-webmvc` - REST API development
-- `spring-boot-starter-data-jpa` - Data persistence
-- `spring-boot-starter-validation` - Input validation
-- `spring-boot-starter-actuator` - Monitoring & metrics
-
-### Testing Dependencies
-- `spring-boot-starter-test` - Comprehensive testing framework
-- JUnit 5, Mockito, AssertJ
-
-### Development Tools
-- Lombok - Reduce boilerplate code
-- SpringDoc OpenAPI - API documentation
-- H2 Database - Embedded database for development
-- Spring Boot DevTools - Development enhancements
-
-## 📝 Development Guidelines
-
-### Code Style
-- Use Lombok annotations to reduce boilerplate
-- Follow Spring Boot conventions for package structure
-- Implement proper exception handling and validation
-
-### Database
-- Use Spring Data JPA repositories for data access
-- Leverage Hibernate/JPA annotations for entity mapping
-- Apply database migrations as needed
-
-### API Design
-- Follow RESTful conventions
-- Use proper HTTP methods (GET, POST, PUT, DELETE)
-- Return appropriate HTTP status codes
-- Document endpoints with OpenAPI annotations
-
-## 🔐 Security Considerations
-
-- Use environment variables for sensitive configuration
-- Implement proper authentication/authorization (to be added)
-- Validate all user inputs
-- Use HTTPS in production environments
-
-## 📈 Monitoring & Observability
-
-The project includes Spring Boot Actuator for:
-- Health checks: `/actuator/health`
-- Metrics: `/actuator/metrics`
-- Environment information: `/actuator/env`
-
-## 🐛 Troubleshooting
-
-### Application Context Load Failure
-
-**Issue**: `Failed to load ApplicationContext`
-
-**Solution**: Ensure all dependencies are correctly resolved:
-```
-bash
-./mvnw clean install -U
-```
-### Service Discovery Issues
-
-**Issue**: Services not registering with Eureka
-
-**Solution**: 
-- Verify Eureka Server is running on port 8761
-- Check service application names in configuration
-- Review Eureka dashboard for registered instances
-
-### Port Already in Use
-
-**Issue**: `Port 8080 is already in use`
-
-**Solution**: Kill the process using the port or change port in configuration:
-```
-properties
-server.port=8080
-```
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📄 License
-
-[Add your license information here]
-
-## 👥 Authors & Maintainers
-
-- **Project**: EazyBytes Microservices Platform
-- **Organization**: EazyBytes
-
-## 📞 Support & Contact
-
-For issues, questions, or contributions:
-- Create an issue in the repository
-- Check existing documentation
-- Review application logs for error details
-
-## 🗺️ Roadmap
-
-- [ ] Add authentication/authorization (Spring Security)
-- [ ] Implement API Gateway (Spring Cloud Gateway)
-- [ ] Add distributed tracing (Spring Cloud Sleuth)
-- [ ] Implement circuit breaker pattern (Resilience4j)
-- [ ] Add comprehensive logging (ELK Stack integration)
-- [ ] Database migration scripts (Flyway/Liquibase)
-- [ ] Production deployment guides
-
-## ✨ Features
-
-- ✅ Multi-service microservices architecture
-- ✅ Service discovery with Eureka
-- ✅ Centralized configuration management
-- ✅ RESTful APIs with OpenAPI documentation
-- ✅ Health monitoring with Actuator
-- ✅ Docker containerization support
-- ✅ Database persistence with JPA
-- ✅ Input validation with Jakarta Bean Validation
-- ✅ Development tools and IDE support
-
----
-
-**Last Updated**: March 2026  
-**Version**: 1.0.0
-```
+A multi-service banking application built with Spring Boot, Spring Cloud, and Jakarta EE. The platform demonstrates a modern microservices architecture with service discovery, centralized configuration, and independent domain services.
+
+Last updated: 2026-03-23 19:54
+
+## Overview
+
+This repository contains the following microservices and infrastructure components:
+- Accounts Service — customer accounts domain
+- Cards Service — card domain
+- Loans Service — loans domain
+- Config Server — centralized configuration
+- Eureka Server — service discovery
+- API Gateway — edge service (Spring Cloud Gateway)
+
+## Tech Stack
+
+- Language: Java 21
+- Frameworks: Spring Boot 4.x, Spring Cloud 2025.1.x, Jakarta Bean Validation
+- APIs: Spring Web (MVC/WebFlux where applicable)
+- Persistence: Spring Data JPA
+- Database: MySQL (local/dev via Docker Compose)
+- Service Discovery: Netflix Eureka (Spring Cloud)
+- Central Config: Spring Cloud Config (native profile)
+- Documentation: SpringDoc OpenAPI 3.0.2 (accounts, loans, cards)
+- Observability: Spring Boot Actuator
+- Packaging: Maven (per-module), Jib for container images
+
+Notes
+- There is no root aggregator Maven POM. Each module is an independent Spring Boot application with its own `pom.xml` and Maven Wrapper.
+
+## Project Structure
+
+section2/
+- accounts/
+  - src/main/java/com/eazybytes/accounts/AccountsApplication.java (entrypoint)
+  - src/main/resources/application.yml (local overrides)
+  - pom.xml, mvnw
+- cards/
+  - src/main/java/com/eazybytes/cards/CardsApplication.java (entrypoint)
+  - src/main/resources/application.yml (local overrides)
+  - pom.xml, mvnw
+- loans/
+  - src/main/java/com/eazybytes/loans/LoansApplication.java (entrypoint)
+  - src/main/resources/application.yml (local overrides)
+  - pom.xml, mvnw
+- configserver/
+  - src/main/java/com/eazybytes/configserver/ConfigserverApplication.java (entrypoint)
+  - src/main/resources/application.yaml
+  - pom.xml, mvnw
+- eurekaserver/
+  - src/main/java/com/eazybytes/eurekaserver/EurekaserverApplication.java (entrypoint)
+  - src/main/resources/application.yaml
+  - pom.xml, mvnw
+- gatewayserver/
+  - src/main/java/com/eazybytes/gatewayserver/GatewayserverApplication.java (entrypoint)
+  - src/main/resources/application.yaml
+  - pom.xml, mvnw
+- docker-compose/
+  - default/ (infra only by default; app services commented)
+  - prod/ (infra + app services enabled)
+- readme.md (this file)
+
+## Requirements
+
+- Java 21 (set `JAVA_HOME` accordingly)
+- Docker + Docker Compose
+- Optional: Maven 3.9+ (or use each module’s `mvnw` wrapper)
+
+## Ports and Endpoints
+
+- Eureka Server: 8070 (dashboard at http://localhost:8070)
+- Config Server: 8071
+- API Gateway: 8072
+- Accounts: 8080
+- Loans: 8090
+- Cards: 9000
+- Actuator endpoints are exposed (see each service’s `application.yml`).
+
+## Local Development (without Docker)
+
+Run infrastructure first, then services. Ensure local MySQL is available, or run DBs via Docker (see below). Local `application.yml` files are configured to use MySQL on localhost with user `root`/`root`.
+
+1) Start Config Server
+- Path: `configserver/`
+- Command: `./mvnw spring-boot:run`
+- Port: 8071
+
+2) Start Eureka Server
+- Path: `eurekaserver/`
+- Command: `./mvnw spring-boot:run`
+- Port: 8070
+
+3) Start domain services (in any order after Eureka/Config are up)
+- Accounts (8080): `cd accounts && ./mvnw spring-boot:run`
+- Loans (8090): `cd loans && ./mvnw spring-boot:run`
+- Cards (9000): `cd cards && ./mvnw spring-boot:run`
+
+4) Start API Gateway (after upstream services are healthy)
+- Path: `gatewayserver/`
+- Command: `./mvnw spring-boot:run`
+- Port: 8072
+
+Swagger UI (if enabled by SpringDoc in the service)
+- Accounts: http://localhost:8080/swagger-ui/index.html
+- Loans: http://localhost:8090/swagger-ui/index.html
+- Cards: http://localhost:9000/swagger-ui/index.html
+
+Health checks (example)
+- `curl http://localhost:8080/actuator/health`
+
+## Containerized Setup (Docker Compose)
+
+This repository provides Compose files for different environments.
+
+Option A — Infra only (Config, Eureka, MySQL DBs)
+- File: `docker-compose/default/docker-compose.yml`
+- Starts: configserver (8071), eurekaserver (8070), MySQL for accounts (3306), loans (3307), cards (3308)
+- Domain services and gateway are present but commented out in this file.
+- Usage:
+  - `cd docker-compose/default`
+  - `docker compose up -d`
+
+Option B — Full stack (Infra + All services + Gateway)
+- File: `docker-compose/prod/docker-compose.yml`
+- Starts: configserver, eurekaserver, gatewayserver (8072), accounts (8080), loans (8090), cards (9000), and their MySQL DBs
+- Usage:
+  - `cd docker-compose/prod`
+  - `docker compose up -d`
+
+Images and tags
+- Built via Jib with tag `eazybytes/<artifactId>:s4` (multi-arch: arm64, amd64)
+  - accounts: `eazybytes/accounts:s4`
+  - cards: `eazybytes/cards:s4`
+  - loans: `eazybytes/loans:s4`
+  - configserver: `eazybytes/configserver:s4`
+  - eurekaserver: `eazybytes/eurekaserver:s4`
+  - gatewayserver: `eazybytes/gatewayserver:s4`
+
+## Build
+
+Per-module builds (no root aggregator):
+- Accounts: `cd accounts && ./mvnw clean package`
+- Cards: `cd cards && ./mvnw clean package`
+- Loans: `cd loans && ./mvnw clean package`
+- Config: `cd configserver && ./mvnw clean package`
+- Eureka: `cd eurekaserver && ./mvnw clean package`
+- Gateway: `cd gatewayserver && ./mvnw clean package`
+
+Build container images with Jib (per module):
+- `./mvnw jib:dockerBuild` (to local Docker daemon)
+- or `./mvnw jib:build` (to a registry; configure `to.image` and credentials)
+
+## Environment Variables and Configuration
+
+Common (from docker-compose/default/common-config.yml)
+- SPRING_PROFILES_ACTIVE: typically `default` or `native` (for config server)
+- SPRING_CONFIG_IMPORT: e.g., `configserver:http://configserver:8071/`
+- SPRING_DATASOURCE_USERNAME: `root`
+- SPRING_DATASOURCE_PASSWORD: `root`
+- EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: `http://eurekaserver:8070/eureka/`
+- SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_DISCOVERY_LOCATOR_ENABLED: `false`
+
+Service-local database URLs (when running locally without Compose)
+- accounts: `jdbc:mysql://localhost:3306/accountsdb`
+- loans:    `jdbc:mysql://localhost:3307/loansdb`
+- cards:    `jdbc:mysql://localhost:3308/cardsdb`
+
+Notable application properties
+- Each service imports config from Config Server: `spring.config.import=optional:configserver:http://localhost:8071/`
+- Actuator endpoints are exposed (see each `application.yml`) for health, info, gateway, etc.
+- Some controllers reference `build.version` (e.g., Accounts/Card/Loans controllers). Define it via config server or local `application.yml` as needed.
+  - TODO: Add `build.version` to central config and document its intended semantics.
+
+## Tests
+
+Run tests per module:
+- `cd accounts && ./mvnw test`
+- `cd cards && ./mvnw test`
+- `cd loans && ./mvnw test`
+- `cd configserver && ./mvnw test`
+- `cd eurekaserver && ./mvnw test`
+- `cd gatewayserver && ./mvnw test`
+
+## API Gateway
+
+- Port: 8072
+- Spring Cloud Gateway configured in `gatewayserver/src/main/resources/application.yaml` and Java config (`EazybankRouteLocator`).
+- Resilience4j circuit breaker defaults are provided in gateway `application.yaml`.
+
+## Troubleshooting
+
+- Service cannot fetch configuration
+  - Ensure Config Server is running on 8071 and reachable
+  - Check `spring.config.import` in each service
+- Service not registering in Eureka
+  - Ensure Eureka is running on 8070
+  - Verify `eureka.client.serviceUrl.defaultZone` property
+- Database connection errors locally
+  - Ensure MySQL containers are running (3306/3307/3308) or adjust URLs
+- Port conflicts
+  - Change `server.port` in the affected service `application.yml`
+
+## License
+
+TODO: Add license details (e.g., Apache-2.0/MIT) and include a `LICENSE` file at repo root.
+
+## Maintainers
+
+- Project: EazyBytes Microservices Platform (section 2)
+- Contact: TODO (add maintainer names/emails or link to issues)
