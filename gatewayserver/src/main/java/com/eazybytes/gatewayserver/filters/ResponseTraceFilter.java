@@ -26,7 +26,11 @@ public class ResponseTraceFilter {
     public GlobalFilter postGlobalFilter() {
         return (exchange, chain) -> chain
                 .filter(exchange)
-                .then(Mono.fromRunnable(() -> addCorrelationIdToResponse(exchange)));
+                .then(Mono.fromRunnable(() -> {
+                    if(!exchange.getResponse().getHeaders().containsHeader(FilterUtility.CORRELATION_ID)) {
+                        addCorrelationIdToResponse(exchange);
+                    }
+                }));
     }
 
     private void addCorrelationIdToResponse(ServerWebExchange exchange) {
