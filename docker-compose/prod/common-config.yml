@@ -23,12 +23,23 @@ services:
       start_period: 10s
     environment:
       MYSQL_ROOT_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
 
   microservice-configserver-config:
     extends:
       service: microservice-base-config
     environment:
-      SPRING_PROFILES_ACTIVE: prod
+      SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+
+  microservice-gatewayserver-config:
+    extends: microservice-configserver-config
+    environment:
+      SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_DISCOVERY_LOCATOR_ENABLED: "false"
+#      SPRING_DATA_REDIS_CONNECT-TIMEOUT: 2s
+#      SPRING_DATA_REDIS_HOST: redis
+#      SPRING_DATA_REDIS_PORT: 6379
+#      SPRING_DATA_REDIS_TIMEOUT: 1s
